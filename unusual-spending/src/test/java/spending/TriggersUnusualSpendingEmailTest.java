@@ -18,6 +18,9 @@ public class TriggersUnusualSpendingEmailTest {
     public void sendsNoEmailIfNoUnusualPaymentsFound() {
         Mockito.when(unusualSpendingFetcher.getUnusualSpending(UserId.of(1)))
                         .thenReturn(UnusualSpendingSummary.empty());
+
+        unit.trigger(1);
+        
         Mockito.verifyNoInteractions(unusualSpendingEmailSender);
     }
 
