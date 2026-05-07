@@ -1,5 +1,6 @@
 package spending;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -27,9 +28,10 @@ public class StandardUnusualSpendingAnalyser implements UnusualSpendingAnalyser 
         return payments.stream().collect(
                 Collectors.groupingBy(
                         Payment::category,
-                        Collectors.mapping(Payment::amount,
-                            Collectors.collectingAndThen(
-                                    Collectors.reducing(Amount::plus),
-                                    (optional) -> optional.orElse(Amount.of(0))))));
+                        Collectors.reducing(
+                                Amount.of(BigDecimal.ZERO),
+                                Payment::amount,
+                                Amount::plus
+                        )));
     }
 }
