@@ -10,13 +10,10 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
+import static spending.TestData.*;
 
 public class AnalysingUnusualSpendingFetcherTest {
 
-    private static final Month THIS_MONTH = Month.JANUARY;
-    private static final Month LAST_MONTH = Month.DECEMBER;
-    private static final Year THIS_YEAR = Year.of(2008);
-    private static final Year LAST_YEAR = Year.of(2007);
     private final TimeSource timeSource = TimeSourceFromLocalDate.of(THIS_MONTH, THIS_YEAR);
 
     private final PaymentFetcher paymentFetcher = Mockito.mock(PaymentFetcher.class);

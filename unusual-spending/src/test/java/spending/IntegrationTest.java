@@ -12,13 +12,11 @@ import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static spending.TestData.*;
 
 public class IntegrationTest {
 
-    private static final Month THIS_MONTH = Month.JANUARY;
-    private static final Month LAST_MONTH = Month.DECEMBER;
-    private static final Year THIS_YEAR = Year.of(2008);
-    private static final Year LAST_YEAR = Year.of(2007);
+
 
     private final PaymentFetcher fetcher = Mockito.mock(PaymentFetcher.class);
     private final EmailSender sender = Mockito.mock(EmailSender.class);
@@ -34,6 +32,23 @@ public class IntegrationTest {
                     new StandardUnusualSpendingEmailFormatter()
             )
     );
+
+    @Test
+    public void sendsNoEmailIfNoUnusualPaymentsArePresent() {
+        when(fetcher.fetchPayments(UserId.of(1), THIS_YEAR, THIS_MONTH))
+                .thenReturn(Set.of(
+                        Payment.of(Amount.of(100), Category.GROCERIES),
+                        Payment.of(Amount.of(150), Category.TRAVEL)));
+
+        when(fetcher.fetchPayments(UserId.of(1), LAST_YEAR, LAST_MONTH))
+                .thenReturn(Set.of(
+                        Payment.of(Amount.of(80), Category.GROCERIES),
+                        Payment.of(Amount.of(120), Category.TRAVEL)));
+
+        unit.trigger(1);
+
+        Mockito.verifyNoInteractions(sender);
+    }
 
     @Test
     public void sendsEmailInExpectedFormatWhenUnusualPaymentsArePresent() {
