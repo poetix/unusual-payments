@@ -2,8 +2,20 @@ package spending;
 
 public class TriggersUnusualSpendingEmail {
 
-	public void trigger(long userId) {
-		// TODO: This is the entry point. Start with a test of this class
+	private final UnusualSpendingFetcher unusualSpendingFetcher;
+	private final UnusualSpendingEmailSender unusualSpendingEmailSender;
+
+    public TriggersUnusualSpendingEmail(UnusualSpendingFetcher unusualSpendingFetcher, UnusualSpendingEmailSender unusualSpendingEmailSender) {
+		this.unusualSpendingFetcher = unusualSpendingFetcher;
+        this.unusualSpendingEmailSender = unusualSpendingEmailSender;
+    }
+
+    public void trigger(long userId) {
+		UserId id = UserId.of(userId);
+		UnusualSpendingSummary unusualSpending = unusualSpendingFetcher.getUnusualSpending(id);
+		if (unusualSpending.isNotEmpty()) {
+			unusualSpendingEmailSender.sendUnusualSpendingEmail(id, unusualSpending);
+		}
 	}
 
 }
